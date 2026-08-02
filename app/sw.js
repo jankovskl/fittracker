@@ -1,10 +1,11 @@
-const CACHE = 'fittrack-v4';
+const CACHE = 'fittrack-v7';
 const FILES = [
   'index.html',
   'manifest.json',
   'icon-192.svg',
   'icon-512.svg',
-  'neko.js'
+  'neko.js',
+  'supabase.js'
 ];
 
 self.addEventListener('install', e => {

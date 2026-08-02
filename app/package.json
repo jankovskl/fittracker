@@ -14,7 +14,7 @@
     "appId": "com.fittrack.app",
     "productName": "FitTrack",
     "icon": "icon.ico",
-    "files": ["index.html", "main.js", "preload.js", "sw.js", "manifest.json", "neko.js", "icon.ico", "icon-*.svg"],
+    "files": ["index.html", "main.js", "preload.js", "sw.js", "manifest.json", "neko.js", "supabase.js", "icon.ico", "icon-*.svg"],
     "win": { "target": "nsis" },
     "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
   },
