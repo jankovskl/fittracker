@@ -1,0 +1,25 @@
+{
+  "name": "fittrack",
+  "version": "2.0.0",
+  "description": "FitTrack Workout Tracker",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "build": {
+    "appId": "com.fittrack.app",
+    "productName": "FitTrack",
+    "icon": "icon.ico",
+    "files": ["index.html", "main.js", "preload.js", "sw.js", "manifest.json", "neko.js", "icon.ico", "icon-*.svg"],
+    "win": { "target": "nsis" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
+  },
+  "devDependencies": {
+    "electron": "^43.1.1",
+    "electron-builder": "^26.15.3"
+  }
+}

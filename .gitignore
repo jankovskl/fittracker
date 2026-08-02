@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Build output
+app/dist/
+dist/
+
+# User data
+backups/
+
+# OS
+Thumbs.db
+.DS_Store
