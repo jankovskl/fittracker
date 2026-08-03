@@ -342,23 +342,42 @@
             gap: 0.75rem;
             align-items: center;
             background: rgba(0,0,0,0.3);
-            padding: 0.8rem;
+            padding: 0.8rem 0.8rem 0.8rem 2.2rem;
             border-radius: 0.5rem;
             margin-bottom: 0.65rem;
             cursor: grab;
             border: 1px solid rgba(var(--accent-rgb), 0.05);
             transition: border-color 0.15s;
+            position: relative;
         }
         .exercise-row:hover { border-color: rgba(var(--accent-rgb), 0.15); }
         .exercise-row.dragging { opacity: 0.4; cursor: grabbing; }
         .exercise-row.drag-over { border-left: 3px solid var(--accent); background: rgba(var(--accent-rgb), 0.05); }
+        .drag-handle {
+            position: absolute;
+            left: 0.6rem; top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: rgba(var(--accent-rgb), 0.5);
+            cursor: grab;
+            padding: 0;
+            line-height: 1;
+            font-size: 1rem;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+            z-index: 2;
+        }
+        .drag-handle:active { cursor: grabbing; }
+        .exercise-row:active .drag-handle { color: var(--accent); }
         .exercise-row input { margin-bottom: 0; text-align: center; }
         .exercise-row .name { text-align: left; font-weight: 600; }
         .header-row {
             font-size: 0.85rem;
             color: var(--text-muted);
             background: transparent;
-            padding: 0 0.8rem;
+            padding: 0 0.8rem 0 2.2rem;
             margin-bottom: 0.35rem;
             border: none;
         }
@@ -441,8 +460,9 @@
             .exercise-row {
                 grid-template-columns: 1fr 3.5rem 3.5rem 3.5rem 2.5rem;
                 gap: 0.4rem;
-                padding: 0.65rem 0.5rem;
+                padding: 0.65rem 0.5rem 0.65rem 2rem;
             }
+            .drag-handle { left: 0.45rem; font-size: 1.1rem; }
             .exercise-row input { padding: 0.55rem 0.3rem; font-size: 1rem; }
             .exercise-row .name { grid-column: 1 / -1; width: 100%; text-align: left; }
             .header-row { display: none; }
@@ -461,7 +481,9 @@
             .exercise-row {
                 grid-template-columns: 1fr 3rem 3rem 3rem 2.25rem;
                 gap: 0.3rem;
+                padding-left: 1.7rem;
             }
+            .drag-handle { left: 0.35rem; }
             .exercise-row input { font-size: 0.9rem; padding: 0.5rem 0.2rem; }
         }
     </style>
@@ -750,6 +772,7 @@
         }
 
         let draggedIndex = null;
+        let pointerDrag = null;
 
         function dragStart(e, index) {
             draggedIndex = index;
@@ -769,15 +792,81 @@
             document.querySelectorAll('.exercise-row.drag-over').forEach(el => el.classList.remove('drag-over'));
         }
 
-        function dropExercise(e, dropIndex) {
+        function dropExercise(e, index) {
             e.preventDefault();
-            if (draggedIndex === null || draggedIndex === dropIndex) return;
+            if (draggedIndex === null || draggedIndex === index) return;
             const day = days.find(d => d.id === currentDayId);
             const [moved] = day.exercises.splice(draggedIndex, 1);
-            day.exercises.splice(dropIndex, 0, moved);
+            day.exercises.splice(index, 0, moved);
             draggedIndex = null;
             saveData();
             renderExercises();
+        }
+
+        function computeDropPos(rows, from, y) {
+            let target = from;
+            rows.forEach((r, i) => {
+                if (i === from) return;
+                const rr = r.getBoundingClientRect();
+                const mid = rr.top + rr.height / 2;
+                if (y > mid && i > from) target = i;
+                if (y < mid && i < from) target = i;
+            });
+            return target;
+        }
+
+        function pointerDownHandle(e) {
+            if (e.button !== undefined && e.button !== 0) return;
+            e.preventDefault();
+            const row = e.currentTarget.closest('.exercise-row');
+            pointerDrag = {
+                from: Array.prototype.indexOf.call($('exercises-list').children, row),
+                startY: e.clientY,
+                list: $('exercises-list'),
+                row
+            };
+            e.currentTarget.setPointerCapture(e.pointerId);
+        }
+
+        function pointerMoveHandle(e) {
+            if (!pointerDrag) return;
+            const dy = e.clientY - pointerDrag.startY;
+            if (!pointerDrag.moved && Math.abs(dy) < 8) return;
+            e.preventDefault();
+            if (!pointerDrag.moved) {
+                pointerDrag.moved = true;
+                pointerDrag.row.classList.add('dragging');
+            }
+            pointerDrag.row.style.transform = 'translateY(' + dy + 'px)';
+            const rows = Array.from(pointerDrag.list.children);
+            const target = computeDropPos(rows, pointerDrag.from, e.clientY);
+            rows.forEach((r, i) => r.classList.toggle('drop-over', i === target && i !== pointerDrag.from));
+        }
+
+        function pointerUpHandle(e) {
+            if (!pointerDrag) return;
+            const { from, list, row, moved } = pointerDrag;
+            pointerDrag = null;
+            Array.from(list.children).forEach(r => r.classList.remove('drop-over'));
+            row.classList.remove('dragging');
+            row.style.transform = '';
+            if (!moved) return;
+            const target = computeDropPos(Array.from(list.children), from, e.clientY);
+            if (target !== from) {
+                const day = days.find(d => d.id === currentDayId);
+                const [movedEx] = day.exercises.splice(from, 1);
+                day.exercises.splice(target, 0, movedEx);
+                saveData();
+                renderExercises();
+            }
+        }
+
+        function pointerCancelHandle() {
+            if (!pointerDrag) return;
+            pointerDrag.row.classList.remove('dragging');
+            pointerDrag.row.style.transform = '';
+            Array.from(pointerDrag.list.children).forEach(r => r.classList.remove('drop-over'));
+            pointerDrag = null;
         }
 
         function updateExercise(ei, field, value) {
@@ -800,6 +889,9 @@
             const day = days.find(d => d.id === currentDayId);
             $('exercises-list').innerHTML = day.exercises.map((ex, ei) => `
                 <div class="exercise-row" draggable="true" ondragstart="dragStart(event, ${ei})" ondragover="dragOver(event)" ondrop="dropExercise(event, ${ei})" ondragend="dragEnd(event)">
+                    <span class="drag-handle" draggable="false" title="Drag to reorder" aria-label="Drag to reorder"
+                        onpointerdown="pointerDownHandle(event)" onpointermove="pointerMoveHandle(event)"
+                        onpointerup="pointerUpHandle(event)" onpointercancel="pointerCancelHandle(event)">⋮⋮</span>
                     <input class="name" type="text" placeholder="Exercise name" value="${escapeHtml(ex.name)}" onchange="updateExercise(${ei},'name',this.value)">
                     <input type="number" min="0" max="50" placeholder="Sets" value="${ex.sets}" onchange="updateExercise(${ei},'sets',this.value)" oninput="validateNumber(this, 0, 50)">
                     <input type="number" min="0" max="100" placeholder="Reps" value="${ex.reps}" onchange="updateExercise(${ei},'reps',this.value)" oninput="validateNumber(this, 0, 100)">
