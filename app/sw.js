@@ -1,4 +1,4 @@
-const CACHE = 'fittrack-v11';
+const CACHE = 'fittrack-v12';
 const FILES = [
   'index.html',
   'manifest.json',
