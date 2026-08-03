@@ -239,6 +239,30 @@
         this.hasMouseMoved = true;
       });
 
+      // Track touch position (phones/tablets fire no mousemove on tap)
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length > 0) {
+            this.mouseX = e.touches[0].clientX;
+            this.mouseY = e.touches[0].clientY;
+            this.hasMouseMoved = true;
+          }
+        },
+        { passive: true }
+      );
+      document.addEventListener(
+        "touchmove",
+        (e) => {
+          if (e.touches.length > 0) {
+            this.mouseX = e.touches[0].clientX;
+            this.mouseY = e.touches[0].clientY;
+            this.hasMouseMoved = true;
+          }
+        },
+        { passive: true }
+      );
+
       // Update bounds on resize
       window.addEventListener("resize", () => {
         this.boundsWidth = document.documentElement.clientWidth - SPRITE_SIZE;
@@ -609,7 +633,9 @@
           break;
 
         case NekoState.AWAKE:
-          if (this.stateCount >= AWAKE_TIME + Math.floor(Math.random() * 20)) {
+          if (moveStart || this.moveDX !== 0 || this.moveDY !== 0) {
+            this.calcDirection(this.moveDX, this.moveDY);
+          } else if (this.stateCount >= AWAKE_TIME + Math.floor(Math.random() * 20)) {
             this.calcDirection(this.moveDX, this.moveDY);
           }
           break;
