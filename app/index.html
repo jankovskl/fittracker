@@ -450,7 +450,7 @@
             .stat-box { padding: 0.9rem 0.5rem; }
             .stat-box .value { font-size: 1.5rem; }
             .row { gap: 0.6rem; }
-            .sync-badge { top: calc(4.1rem + env(safe-area-inset-top)); right: 0.6rem; font-size: 0.72rem; padding: 0.3rem 0.6rem; }
+            .sync-badge { position: static; top: auto; right: auto; margin-left: auto; font-size: 0.72rem; padding: 0.3rem 0.6rem; }
             .quick-times { gap: 0.5rem; }
             .quick-times button { padding: 0.5rem 0.8rem; font-size: 0.9rem; }
             .auth-panel { width: calc(100vw - 2rem); right: 1rem; top: calc(100% + 0.5rem); }
@@ -482,29 +482,30 @@
                 <div class="theme-option" data-theme="blue"><span class="swatch" style="background:#3b82f6"></span> Blue</div>
             </div>
         </div>
-        <div class="auth-wrap">
-            <button id="auth-btn" class="auth-btn" title="Account" aria-label="Account">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            </button>
-            <div id="auth-panel" class="auth-panel hidden">
-                <h3>Account</h3>
-                <div id="auth-signed-in" class="auth-signed hidden">
-                    <div id="auth-email" class="auth-status"></div>
-                    <button id="sign-out-btn" class="btn btn-secondary" style="width:100%">Sign Out</button>
-                </div>
-                <form id="auth-form" class="auth-form">
-                    <input id="auth-email-input" class="auth-input" type="email" placeholder="Email" autocomplete="email" required>
-                    <input id="auth-password-input" class="auth-input" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
-                    <div class="auth-row">
-                        <button type="submit" id="sign-in-btn" class="btn btn-primary">Sign In</button>
-                        <button type="button" id="sign-up-btn" class="btn btn-secondary">Create</button>
+<div class="auth-wrap">
+                <button id="auth-btn" class="auth-btn" title="Account" aria-label="Account">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </button>
+                <div id="auth-panel" class="auth-panel hidden">
+                    <h3>Account</h3>
+                    <div id="auth-signed-in" class="auth-signed hidden">
+                        <div id="auth-email" class="auth-status"></div>
+                        <button id="sign-out-btn" class="btn btn-secondary" style="width:100%">Sign Out</button>
                     </div>
-                    <div id="auth-err" class="auth-err"></div>
-                    <div class="auth-hint">Optional — the app works fully offline without an account.</div>
-                </form>
+                    <form id="auth-form" class="auth-form">
+                        <input id="auth-email-input" class="auth-input" type="email" placeholder="Email" autocomplete="email" required>
+                        <input id="auth-password-input" class="auth-input" type="password" placeholder="Password" autocomplete="current-password" minlength="6" required>
+                        <div class="auth-row">
+                            <button type="submit" id="sign-in-btn" class="btn btn-primary">Sign In</button>
+                            <button type="button" id="sign-up-btn" class="btn btn-secondary">Create</button>
+                        </div>
+                        <div id="auth-err" class="auth-err"></div>
+                        <div class="auth-hint">Optional — the app works fully offline without an account.</div>
+                    </form>
+                </div>
             </div>
-        </div>
-    </header>
+            <div id="sync-badge" class="sync-badge hidden"></div>
+        </header>
 
     <main>
         <!-- LEFT COLUMN -->
@@ -616,7 +617,6 @@
     </main>
 
     <div id="toast" class="toast"></div>
-    <div id="sync-badge" class="sync-badge hidden"></div>
 
     <script>
         const STORAGE_KEY = 'fittrack_split_data';
