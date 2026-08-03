@@ -592,7 +592,6 @@
             <div class="card">
                 <div class="card-title">Overall Progress</div>
                 <div class="progress-grid">
-                    <div class="stat-box"><div class="value" id="stat-days">0</div><div class="label">Days</div></div>
                     <div class="stat-box"><div class="value" id="stat-exercises">0</div><div class="label">Exercises</div></div>
                     <div class="stat-box"><div class="value" id="stat-sessions">0</div><div class="label">Sessions</div></div>
                 </div>
@@ -925,7 +924,6 @@
                 totalExercises += d.exercises.length;
                 sessions += (history[d.id] || []).length;
             });
-            $('stat-days').textContent = currentDayId ? 1 : days.length;
             $('stat-exercises').textContent = totalExercises;
             $('stat-sessions').textContent = sessions;
 
