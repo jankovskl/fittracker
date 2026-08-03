@@ -585,7 +585,8 @@
       switch (this.state) {
         case NekoState.STOP:
           if (moveStart) {
-            this.setState(NekoState.AWAKE);
+            // New tap/target: skip the AWAKE stall and start running now
+            this.calcDirection(this.moveDX, this.moveDY);
           } else if (this.stateCount >= STOP_TIME) {
             // Check for wall scratching using preserved moveDX/moveDY
             if (this.moveDX < 0 && this.logicX <= 0) {
@@ -604,7 +605,7 @@
 
         case NekoState.WASH:
           if (moveStart) {
-            this.setState(NekoState.AWAKE);
+            this.calcDirection(this.moveDX, this.moveDY);
           } else if (this.stateCount >= WASH_TIME) {
             this.setState(NekoState.SCRATCH);
           }
@@ -612,7 +613,7 @@
 
         case NekoState.SCRATCH:
           if (moveStart) {
-            this.setState(NekoState.AWAKE);
+            this.calcDirection(this.moveDX, this.moveDY);
           } else if (this.stateCount >= SCRATCH_TIME) {
             this.setState(NekoState.YAWN);
           }
@@ -620,7 +621,7 @@
 
         case NekoState.YAWN:
           if (moveStart) {
-            this.setState(NekoState.AWAKE);
+            this.calcDirection(this.moveDX, this.moveDY);
           } else if (this.stateCount >= YAWN_TIME) {
             this.setState(NekoState.SLEEP);
           }
@@ -628,7 +629,7 @@
 
         case NekoState.SLEEP:
           if (moveStart) {
-            this.setState(NekoState.AWAKE);
+            this.calcDirection(this.moveDX, this.moveDY);
           }
           break;
 
