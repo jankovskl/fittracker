@@ -1,9 +1,10 @@
-const CACHE = 'fittrack-v7';
+const CACHE = 'fittrack-v8';
 const FILES = [
   'index.html',
   'manifest.json',
   'icon-192.svg',
   'icon-512.svg',
+  'icon-256.png',
   'neko.js',
   'supabase.js'
 ];
