@@ -1315,8 +1315,11 @@
                 }
             }, 400);
         };
-        document.addEventListener('online', () => { if (isOnline()) schedulePush(); });
+        document.addEventListener('online', () => { if (isOnline()) pullFromServer(); });
         document.addEventListener('offline', () => setSyncStatus('bad', 'Offline — not synced'));
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) pullFromServer();
+        });
 
         async function pullFromServer() {
             const { data: { session } } = await supabaseClient.auth.getSession();
